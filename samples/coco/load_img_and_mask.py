@@ -1,31 +1,12 @@
 import os
 import sys
-import itertools
-import math
-import logging
-import json
-import re
-from PIL import Image
-import random
-from collections import OrderedDict
 import numpy as np
-import matplotlib
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
-import matplotlib.lines as lines
-from matplotlib.patches import Polygon
-
 # Root directory of the project
 ROOT_DIR = os.path.abspath("../../")
 
 # Import Mask RCNN
 sys.path.append(ROOT_DIR)  # To find local version of the library
-from mrcnn import utils
 from mrcnn import visualize
-from mrcnn.visualize import display_images
-import mrcnn.model as modellib
-from mrcnn.model import log
-
 
 # Run one of the code blocks
 
@@ -41,10 +22,7 @@ COCO_DIR = "coco_dataset"  # TODO: enter value here
 
 
 # Load dataset
-if config.NAME == 'shapes':
-    dataset = shapes.ShapesDataset()
-    dataset.load_shapes(500, config.IMAGE_SHAPE[0], config.IMAGE_SHAPE[1])
-elif config.NAME == "coco":
+if config.NAME == "coco":
     dataset = coco.CocoDataset()
     dataset.load_coco(COCO_DIR, "val", year=2017)
 

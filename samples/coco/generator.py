@@ -1,21 +1,15 @@
 from __future__ import division, print_function, unicode_literals
 import os
-import errno
-import zipfile
-import json
 from itertools import islice
 from mrcnn import utils
 
-import cv2
 import skimage.color
 import skimage.io
 import skimage.transform
 
-from sacred import Experiment, Ingredient
+from sacred import Experiment
 import numpy as np
 from PIL import Image
-from keras.utils import get_file
-from keras.utils.generic_utils import Progbar
 from pycocotools.coco import COCO
 from samples.coco import coco
 config = coco.CocoConfig()
@@ -143,17 +137,16 @@ class KerasGenerator:
                 iterable = np.copy(images_ids)
                 i = iter(iterable)
                 batch_train_indecies = list(islice(i, self.batch_size))
-            batch_x = []
-            batch_y = []
+            batch_x = np.array([])
+            batch_y = np.array([])
             # Цикл по батчу
             for id_image in batch_train_indecies:
                 # 'Converting Annotations to Segmentation Masks...'
-                im_id = self.coco.imgToAnns[id_image][0]['image_id']
                 img = self.coco.loadImgs(id_image)[0]
 
                 if True:
                     target_shape = (img['height'], img['width'], max(ids()) + 1)
-                ann_ids = self.coco.getAnnIds(imgIds=img['id'], iscrowd=None)
+                ann_ids = self.coco.getAnnIds(imgIds=id_image, iscrowd=None)
                 anns = self.coco.loadAnns(ann_ids)
                 mask_one_hot = np.zeros(target_shape, dtype=np.uint8)
                 mask_one_hot[:, :, 0] = 1  # every pixel begins as background
@@ -178,8 +171,15 @@ class KerasGenerator:
                 mask = utils.resize_mask(mask_one_hot, scale, padding)
 
                 # Закидываем в батч:
-                batch_x.append(img)
-                batch_y.append(mask)
+                image = np.expand_dims(image, axis=0)
+                mask = np.expand_dims(mask, axis=0)
+
+                try:
+                    batch_x = np.concatenate([batch_x, image], axis=0)
+                    batch_y = np.concatenate([batch_y, mask], axis=0)
+                except:
+                    batch_x = np.copy(image)
+                    batch_y = np.copy(mask)
 
                 idx_global += 1
             yield batch_x, batch_y
