@@ -47,7 +47,7 @@ class KerasGenerator:
         # Add images
         for i in image_ids:
 
-            image_dir = "{}/{}{}".format('coco_dataset', 'val', '2017')
+            image_dir = "{}/images/{}{}".format(self.dataset_dir, self.subset, self.year)
 
             self.add_image(
                 "coco", image_id=i,
@@ -142,7 +142,7 @@ class KerasGenerator:
             # Цикл по батчу
             for id_image in batch_train_indecies:
                 # 'Converting Annotations to Segmentation Masks...'
-                img = self.coco.loadImgs(id_image)[0]
+                img = self.coco.loadImgs(int(id_image))[0]
 
                 if True:
                     target_shape = (img['height'], img['width'], max(ids()) + 1)

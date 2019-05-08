@@ -24,11 +24,9 @@ if config.NAME == 'shapes':
     dataset.load_shapes(500, config.IMAGE_SHAPE[0], config.IMAGE_SHAPE[1])
 elif config.NAME == "coco":
     dataset = coco.CocoDataset()
-    dataset.load_coco(COCO_DIR, "val", year=2017)
+    dataset.load_coco(COCO_DIR, "train", year=2017)
 # Must call before using the dataset
 dataset.prepare()
-
-
 
 # Load random image and mask.
 image_id = np.random.choice(dataset.image_ids, 1)[0]
