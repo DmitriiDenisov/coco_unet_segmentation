@@ -143,6 +143,7 @@ class KerasGenerator:
                     batch_y = np.copy(mask)
 
                 idx_global += 1
+            del mask_one_hot
             yield batch_x, batch_y
             batch_train_indecies = list(islice(i, self.batch_size))
 

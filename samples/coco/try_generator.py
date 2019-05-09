@@ -1,12 +1,13 @@
 from samples.coco.generator import KerasGenerator
 from tqdm import tqdm
 
+
 def stupid_gen():
     gen = KerasGenerator(annFile='../../coco_dataset/annotations/instances_train2017.json',
                          dataset_dir='coco_dataset',
                          subset='train',
                          year='2017',
-                         batch_size=1)
+                         batch_size=4)
     gen.prepare()
 
     gen_try = gen.generate_batch()
