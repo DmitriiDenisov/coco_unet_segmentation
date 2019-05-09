@@ -6,10 +6,14 @@ def stupid_gen():
                          dataset_dir='coco_dataset',
                          subset='train',
                          year='2017',
-                         batch_size=8)
+                         batch_size=1)
     gen.prepare()
 
     gen_try = gen.generate_batch()
     return gen_try
-    #for i in tqdm(range(10)):
-    #    next(gen_try)
+
+
+if __name__ == '__main__':
+    gen = stupid_gen()
+    for i in tqdm(range(10)):
+        next(gen)

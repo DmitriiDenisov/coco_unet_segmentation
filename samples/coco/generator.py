@@ -34,7 +34,6 @@ class KerasGenerator:
         self.coco = COCO(annFile)
         self.batch_size = batch_size
         self.total_imgs = len(self.coco.imgToAnns.keys())
-        self.image_info = dict()
         self._image_ids = []
         self.class_info = [{"source": "", "id": 0, "name": "BG"}]
         self.all_images_ids = list(self.coco.imgToAnns.keys())
@@ -43,45 +42,16 @@ class KerasGenerator:
         self.subset = subset
         self.year = year
 
-        class_ids = sorted(self.coco.getCatIds())
-        image_ids = []
-        for id in class_ids:
-            image_ids.extend(list(self.coco.getImgIds(catIds=[id])))
-        # Remove duplicates
-        image_ids = list(set(image_ids))
-        # Add images
-        for i in image_ids:
-
-            image_dir = "{}/images/{}{}".format(self.dataset_dir, self.subset, self.year)
-
-            self.add_image(
-                "coco", image_id=i,
-                path=os.path.join(image_dir, self.coco.imgs[i]['file_name']),
-                width=self.coco.imgs[i]["width"],
-                height=self.coco.imgs[i]["height"],
-                annotations=self.coco.loadAnns(self.coco.getAnnIds(
-                    imgIds=[i], catIds=class_ids, iscrowd=None)),
-            file_name=self.coco.imgs[i]['file_name'])
-
-    def add_image(self, source, image_id, path, **kwargs):
-        image_info_temp = {
-            "id": image_id,
-            "source": source,
-            "path": path}
-        image_info_temp.update(kwargs)
-        self.image_info[image_id] = image_info_temp
+        # Add paths
+        image_dir = "{}/images/{}{}".format(self.dataset_dir, self.subset, self.year)
+        for i in self.all_images_ids:
+            self.coco.imgs[i]['path'] = os.path.join(image_dir, self.coco.imgs[i]['file_name'])
 
     @property
     def image_ids(self):
         return self._image_ids
 
-    def prepare(self, class_map=None):
-        """Prepares the Dataset class for use.
-
-        TODO: class map is not supported yet. When done, it should handle mapping
-              classes from different datasets to the same class ID.
-        """
-
+    def prepare(self):
         def clean_name(name):
             """Returns a shorter version of object names for cleaner display."""
             return ",".join(name.split(",")[:1])
@@ -90,34 +60,20 @@ class KerasGenerator:
         self.num_classes = len(self.class_info)
         self.class_ids = np.arange(self.num_classes)
         self.class_names = [clean_name(c["name"]) for c in self.class_info]
-        self.num_images = len(self.image_info)
-        self._image_ids = np.arange(self.num_images)
-
-
-        # Map sources to class_ids they support
-        self.sources = list(set([i['source'] for i in self.class_info]))
-        self.source_class_ids = {}
-        # Loop over datasets
-        for source in self.sources:
-            self.source_class_ids[source] = []
-            # Find classes that belong to this dataset
-            for i, info in enumerate(self.class_info):
-                # Include BG class in all datasets
-                if i == 0 or source == info['source']:
-                    self.source_class_ids[source].append(i)
 
     def load_image(self, image_id):
         """Load the specified image and return a [H,W,3] Numpy array.
         """
         # Load image
-        path = os.path.join('../../', self.image_info[image_id]['path'])
+
+        path = os.path.join('../../', self.coco.imgs[image_id]['path'])
 
         try:
             image = skimage.io.imread(path)
         except:
-            file_name = self.image_info[image_id]['file_name']
+            file_name = self.coco.imgs[image_id]['file_name']
             file_path = "../../{}/images/{}{}/{}".format(self.dataset_dir, self.subset, self.year, file_name)
-            url = self.coco.imgs[self.image_info[image_id]['id']]['coco_url']
+            url = self.coco.imgs[self.coco.imgs[image_id]['id']]['coco_url']
             image = skimage.io.imread(url)
             im = Image.fromarray(image)
             im.save(file_path)
