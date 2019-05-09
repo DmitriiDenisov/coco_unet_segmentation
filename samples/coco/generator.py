@@ -1,8 +1,12 @@
 from __future__ import division, print_function, unicode_literals
-import os
 from itertools import islice
-from mrcnn import utils
 
+import os
+import sys
+PROJECT_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(PROJECT_PATH) # чтобы из консольки можно было запускать
+
+from mrcnn import utils
 import skimage.color
 import skimage.io
 import skimage.transform
@@ -15,6 +19,7 @@ from samples.coco import coco
 config = coco.CocoConfig()
 
 data_coco = Experiment("dataset")
+
 
 def ids():
     return [0,
@@ -111,7 +116,7 @@ class KerasGenerator:
             image = skimage.io.imread(path)
         except:
             file_name = self.image_info[image_id]['file_name']
-            file_path = "../../{}/{}{}/{}".format(self.dataset_dir, self.subset, self.year, file_name)
+            file_path = "../../{}/images/{}{}/{}".format(self.dataset_dir, self.subset, self.year, file_name)
             url = self.coco.imgs[self.image_info[image_id]['id']]['coco_url']
             image = skimage.io.imread(url)
             im = Image.fromarray(image)

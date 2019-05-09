@@ -1,5 +1,8 @@
 from keras import Input
-
+import os
+import sys
+PROJECT_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(PROJECT_PATH) # чтобы из консольки можно было запускать
 from samples.coco.unet import get_unet
 from samples.coco.try_generator import stupid_gen
 
@@ -12,7 +15,6 @@ model.summary()
 epochs = 50
 tr_gen = stupid_gen()
 
-history =  model.fit_generator(tr_gen,
-                    steps_per_epoch=7000 // 32,
-                    verbose=1)
+history = model.fit_generator(tr_gen,
+                    steps_per_epoch=7000 // 32)
 print('Fitted!')
