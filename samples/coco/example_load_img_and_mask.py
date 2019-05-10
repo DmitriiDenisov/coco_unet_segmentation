@@ -19,8 +19,6 @@ from samples.coco import coco
 config = coco.CocoConfig()
 COCO_DIR = "coco_dataset"  # TODO: enter value here
 
-
-
 # Load dataset
 if config.NAME == "coco":
     dataset = coco.CocoDataset()
@@ -33,7 +31,6 @@ print("Image Count: {}".format(len(dataset.image_ids)))
 print("Class Count: {}".format(dataset.num_classes))
 for i, info in enumerate(dataset.class_info):
     print("{:3}. {:50}".format(i, info['name']))
-
 
 
 # Load and display random samples

@@ -363,7 +363,7 @@ class Dataset(object):
             image = skimage.io.imread(path)
         except:
             file_name = self.image_info[image_id]['file_name']
-            file_path = "../../{}/{}{}/{}".format(self.dataset_dir, self.subset, self.year, file_name)
+            file_path = "../../{}/images/{}{}/{}".format(self.dataset_dir, self.subset, self.year, file_name)
             url = self.coco.imgs[self.image_info[image_id]['id']]['coco_url']
             image = skimage.io.imread(url)
             im = Image.fromarray(image)
