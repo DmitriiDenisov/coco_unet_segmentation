@@ -6,7 +6,7 @@ import sys
 PROJECT_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(PROJECT_PATH) # чтобы из консольки можно было запускать
 
-from mrcnn import utils
+from utils import utils
 import skimage.color
 import skimage.io
 import skimage.transform
@@ -15,51 +15,30 @@ from sacred import Experiment
 import numpy as np
 from PIL import Image
 from pycocotools.coco import COCO
-from samples.coco import coco
+from scripts.coco import coco
 config = coco.CocoConfig()
 
 data_coco = Experiment("dataset")
 
 
-def ids():
-    return [0,
-            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17,
-            18, 19, 20, 21, 22, 23, 24, 25, 27, 28, 31, 32, 33, 34, 35, 36,
-            37, 38, 39, 40, 41, 42, 43, 44, 46, 47, 48, 49, 50, 51, 52, 53,
-            54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 67, 70, 72, 73,
-            74, 75, 76, 77, 78, 79, 80, 81, 82, 84, 85, 86, 87, 88, 89, 90]
-
 class KerasGenerator:
     def __init__(self, annFile, batch_size, dataset_dir, subset, year, shuffle=True):
         self.coco = COCO(annFile)
         self.batch_size = batch_size
+        self.num_cats = len(list(self.coco.cats.keys()))
         self.total_imgs = len(self.coco.imgToAnns.keys())
-        self._image_ids = []
-        self.class_info = [{"source": "", "id": 0, "name": "BG"}]
         self.all_images_ids = list(self.coco.imgToAnns.keys())
         self.shuffle = shuffle
         self.dataset_dir = dataset_dir
         self.subset = subset
         self.year = year
 
+        self.map_id_cat = {cat_id: i+1 for i, cat_id in enumerate(list(self.coco.cats.keys()))} # нулевой слой - BackGround
+
         # Add paths
         image_dir = "{}/images/{}{}".format(self.dataset_dir, self.subset, self.year)
         for i in self.all_images_ids:
             self.coco.imgs[i]['path'] = os.path.join(image_dir, self.coco.imgs[i]['file_name'])
-
-    @property
-    def image_ids(self):
-        return self._image_ids
-
-    def prepare(self):
-        def clean_name(name):
-            """Returns a shorter version of object names for cleaner display."""
-            return ",".join(name.split(",")[:1])
-
-        # Build (or rebuild) everything else from the info dicts.
-        self.num_classes = len(self.class_info)
-        self.class_ids = np.arange(self.num_classes)
-        self.class_names = [clean_name(c["name"]) for c in self.class_info]
 
     def load_image(self, image_id):
         """Load the specified image and return a [H,W,3] Numpy array.
@@ -106,7 +85,7 @@ class KerasGenerator:
                 img = self.coco.imgs[id_image]
 
                 if True:
-                    target_shape = (img['height'], img['width'], max(ids()) + 1)
+                    target_shape = (img['height'], img['width'],  self.num_cats)
                 ann_ids = self.coco.getAnnIds(imgIds=id_image, iscrowd=None)
                 anns = self.coco.loadAnns(ann_ids)
                 mask_one_hot = np.zeros(target_shape, dtype=np.uint8)
@@ -117,7 +96,7 @@ class KerasGenerator:
                     # mask_partial = cv2.resize(mask_partial,
                     #                           (target_shape[1], target_shape[0]),
                     #                           interpolation=cv2.INTER_NEAREST)
-                    mask_one_hot[mask_partial > 0, ann['category_id']] = 1
+                    mask_one_hot[mask_partial > 0, self.map_id_cat[ann['category_id']]] = 1
                     mask_one_hot[mask_partial > 0, 0] = 0
 
                 # load_image

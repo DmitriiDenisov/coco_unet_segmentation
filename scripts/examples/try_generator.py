@@ -1,4 +1,4 @@
-from samples.coco.generator import KerasGenerator
+from scripts.coco.generator import KerasGenerator
 from tqdm import tqdm
 
 

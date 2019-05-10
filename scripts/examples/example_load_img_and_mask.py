@@ -6,7 +6,7 @@ ROOT_DIR = os.path.abspath("../../")
 
 # Import Mask RCNN
 sys.path.append(ROOT_DIR)  # To find local version of the library
-from mrcnn import visualize
+from utils import visualize
 
 # Run one of the code blocks
 
@@ -15,7 +15,7 @@ from mrcnn import visualize
 # config = shapes.ShapesConfig()
 
 # MS COCO Dataset
-from samples.coco import coco
+from scripts.coco import coco
 config = coco.CocoConfig()
 COCO_DIR = "coco_dataset"  # TODO: enter value here
 
@@ -27,13 +27,8 @@ if config.NAME == "coco":
 # Must call before using the dataset
 dataset.prepare()
 
-print("Image Count: {}".format(len(dataset.image_ids)))
-print("Class Count: {}".format(dataset.num_classes))
-for i, info in enumerate(dataset.class_info):
-    print("{:3}. {:50}".format(i, info['name']))
 
-
-# Load and display random samples
+# Load and display random scripts
 # dataset.coco.imgs[dataset.image_info[image_id]['id']]['coco_url']
 
 image_ids = np.random.choice(dataset.image_ids, 4)

@@ -1,9 +1,9 @@
 from keras import Input
 from tqdm import tqdm
 
-from samples.coco.unet import get_unet
-from samples.coco.try_generator import stupid_gen
-from samples.coco import coco
+from scripts.coco.unet import get_unet
+from scripts.examples.try_generator import stupid_gen
+from scripts.coco import coco
 config = coco.CocoConfig()
 
 img_size_target = (config.IMAGE_MAX_DIM, config.IMAGE_MAX_DIM, 3)

@@ -17,7 +17,7 @@ def conv2d_block(input_tensor, n_filters, kernel_size=3, batchnorm=True):
     return x
 
 
-def get_unet(input_img, n_filters=16, dropout=0.5, batchnorm=True):
+def get_unet(input_img, exit_channels, n_filters=16, dropout=0.5, batchnorm=True):
     # contracting path
     c1 = conv2d_block(input_img, n_filters=n_filters * 1, kernel_size=3, batchnorm=batchnorm)
     p1 = MaxPooling2D((2, 2))(c1)
@@ -58,7 +58,7 @@ def get_unet(input_img, n_filters=16, dropout=0.5, batchnorm=True):
     u9 = Dropout(dropout)(u9)
     c9 = conv2d_block(u9, n_filters=n_filters * 1, kernel_size=3, batchnorm=batchnorm)
 
-    outputs = Conv2D(91, (1, 1), activation='sigmoid')(c9)
+    outputs = Conv2D(exit_channels, (1, 1), activation='sigmoid')(c9)
     model = Model(inputs=[input_img], outputs=[outputs])
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[])
 
