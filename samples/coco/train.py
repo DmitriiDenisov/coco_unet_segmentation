@@ -1,10 +1,10 @@
-from keras import Input
 import os
 import sys
-from keras.callbacks import ModelCheckpoint
-
 PROJECT_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(PROJECT_PATH) # чтобы из консольки можно было запускать
+from keras import Input
+from keras.callbacks import ModelCheckpoint
+from samples.coco.logger import TensorBoardBatchLogger
 from samples.coco.unet import get_unet
 from samples.coco.generator import KerasGenerator
 from samples.coco import coco
@@ -24,9 +24,10 @@ keras_gen = KerasGenerator(annFile='../../coco_dataset/annotations/instances_tra
 keras_gen.prepare()
 gen = keras_gen.generate_batch()
 
-model_check = ModelCheckpoint('../../models', monitor='loss', verbose=0, save_best_only=True)
+model_check = ModelCheckpoint('../../models/weights.{epoch:02d}-{loss:.5f}.hdf5', monitor='loss', verbose=0, save_best_only=True)
+tf_logger = TensorBoardBatchLogger(project_path=PROJECT_PATH, step_size_train=3, batch_size=keras_gen.batch_size)
 
 history = model.fit_generator(gen,
                               steps_per_epoch=keras_gen.total_imgs // keras_gen.batch_size,
-                              epochs=5,
-                              callbacks=[model_check])
+                              epochs=3,
+                              callbacks=[model_check, tf_logger])

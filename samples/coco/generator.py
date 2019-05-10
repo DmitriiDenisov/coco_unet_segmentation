@@ -103,7 +103,7 @@ class KerasGenerator:
             # Цикл по батчу
             for id_image in batch_train_indecies:
                 # 'Converting Annotations to Segmentation Masks...'
-                img = self.coco.loadImgs(int(id_image))[0]
+                img = self.coco.imgs[id_image]
 
                 if True:
                     target_shape = (img['height'], img['width'], max(ids()) + 1)
@@ -143,7 +143,7 @@ class KerasGenerator:
                     batch_y = np.copy(mask)
 
                 idx_global += 1
-            del mask_one_hot
+                del mask_one_hot
             yield batch_x, batch_y
             batch_train_indecies = list(islice(i, self.batch_size))
 
