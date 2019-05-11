@@ -14,9 +14,9 @@ from utils_folder import config
 config = config.CocoConfig()
 
 # Генератор данных:
-keras_gen = KerasGenerator(annFile='../../coco_dataset/annotations/instances_val2017.json',
+keras_gen = KerasGenerator(annFile='../../coco_dataset/annotations/instances_train2017.json',
                      dataset_dir='coco_dataset',
-                     subset='val',
+                     subset='train',
                      year='2017',
                      batch_size=4)
 gen = keras_gen.generate_batch()
@@ -31,6 +31,6 @@ model.summary()
 model_check = ModelCheckpoint('../../models/weights.{epoch:02d}-{loss:.5f}.hdf5', monitor='loss', verbose=0, save_best_only=True)
 tf_logger = TensorBoardBatchLogger(project_path=PROJECT_PATH, step_size_train=3, batch_size=keras_gen.batch_size)
 history = model.fit_generator(gen,
-                              steps_per_epoch=keras_gen.total_imgs // keras_gen.batch_size,
+                              steps_per_epoch=100,# keras_gen.total_imgs // keras_gen.batch_size,
                               epochs=3,
-                              callbacks=[tf_logger])
+                              callbacks=[tf_logger, model_check])
