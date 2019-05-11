@@ -1,37 +1,33 @@
 import os
 import sys
 import numpy as np
-# Root directory of the project
 ROOT_DIR = os.path.abspath("../../")
-
-# Import Mask RCNN
-sys.path.append(ROOT_DIR)  # To find local version of the library
-from utils_folder import visualize, config
-
-# Run one of the code blocks
-
-# Shapes toy dataset
-# import shapes
-# config = shapes.ShapesConfig()
-
-# MS COCO Dataset
+sys.path.append(ROOT_DIR)
+from utils_folder import visualize, coco_dataset, config
 config = config.CocoConfig()
-COCO_DIR = "coco_dataset"  # TODO: enter value here
 
-# Load dataset
-if config.NAME == "coco":
-    dataset = config.CocoDataset()
-    dataset.load_coco(COCO_DIR, "val", year=2017)
+PREDICTED = True
 
-# Must call before using the dataset
-dataset.prepare()
+if PREDICTED:
+    image = np.load('../main/x_test.npy')
+    mask = np.load('../main/y_pred.npy')
+
+    image = np.squeeze(image)
+    mask = np.squeeze(mask)
+    mask = np.round(mask) * 255
+
+    visualize.display_top_masks(image, mask, np.arange(81), config.class_names)
+else:
+    COCO_DIR = "coco_dataset"
+    if config.NAME == "main":
+        dataset = coco_dataset.CocoDataset()
+        dataset.load_coco(COCO_DIR, "val", year=2017)
+    dataset.prepare()
+
+    image_ids = np.random.choice(dataset.image_ids, 4)
+    for image_id in image_ids:
+        image = dataset.load_image(image_id)
+        mask, class_ids = dataset.load_mask(image_id)
+        visualize.display_top_masks(image, mask, class_ids, dataset.class_names)
 
 
-# Load and display random scripts
-# dataset.coco.imgs[dataset.image_info[image_id]['id']]['coco_url']
-
-image_ids = np.random.choice(dataset.image_ids, 4)
-for image_id in image_ids:
-    image = dataset.load_image(image_id)
-    mask, class_ids = dataset.load_mask(image_id)
-    visualize.display_top_masks(image, mask, class_ids, dataset.class_names)
