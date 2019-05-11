@@ -1,94 +1,12 @@
 import os
 import sys
 import numpy as np
-
 ROOT_DIR = os.path.abspath("../../")
 sys.path.append(ROOT_DIR)
-from utils_folder import visualize, config, coco_dataset
+from utils_folder import visualize, coco_dataset, config
+config = config.CocoConfig()
 
-class_names = ['BG',
- 'person',
- 'bicycle',
- 'car',
- 'motorcycle',
- 'airplane',
- 'bus',
- 'train',
- 'truck',
- 'boat',
- 'traffic light',
- 'fire hydrant',
- 'stop sign',
- 'parking meter',
- 'bench',
- 'bird',
- 'cat',
- 'dog',
- 'horse',
- 'sheep',
- 'cow',
- 'elephant',
- 'bear',
- 'zebra',
- 'giraffe',
- 'backpack',
- 'umbrella',
- 'handbag',
- 'tie',
- 'suitcase',
- 'frisbee',
- 'skis',
- 'snowboard',
- 'sports ball',
- 'kite',
- 'baseball bat',
- 'baseball glove',
- 'skateboard',
- 'surfboard',
- 'tennis racket',
- 'bottle',
- 'wine glass',
- 'cup',
- 'fork',
- 'knife',
- 'spoon',
- 'bowl',
- 'banana',
- 'apple',
- 'sandwich',
- 'orange',
- 'broccoli',
- 'carrot',
- 'hot dog',
- 'pizza',
- 'donut',
- 'cake',
- 'chair',
- 'couch',
- 'potted plant',
- 'bed',
- 'dining table',
- 'toilet',
- 'tv',
- 'laptop',
- 'mouse',
- 'remote',
- 'keyboard',
- 'cell phone',
- 'microwave',
- 'oven',
- 'toaster',
- 'sink',
- 'refrigerator',
- 'book',
- 'clock',
- 'vase',
- 'scissors',
- 'teddy bear',
- 'hair drier',
- 'toothbrush']
-
-PREDICTED = False
+PREDICTED = True
 
 if PREDICTED:
     image = np.load('../main/x_test.npy')
@@ -98,11 +16,8 @@ if PREDICTED:
     mask = np.squeeze(mask)
     mask = np.round(mask) * 255
 
-    class_names.extend(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'f', 'q', 'e'])
-
-    visualize.display_top_masks(image, mask, np.arange(91), class_names)
+    visualize.display_top_masks(image, mask, np.arange(81), config.class_names)
 else:
-    config = config.CocoConfig()
     COCO_DIR = "coco_dataset"
     if config.NAME == "main":
         dataset = coco_dataset.CocoDataset()

@@ -10,14 +10,11 @@ from utils_folder import utils, config
 import skimage.color
 import skimage.io
 import skimage.transform
-from sacred import Experiment
 import numpy as np
 from PIL import Image
 from pycocotools.coco import COCO
 
 config = config.CocoConfig()
-
-data_coco = Experiment("dataset")
 
 
 class KerasGenerator:
@@ -63,7 +60,6 @@ class KerasGenerator:
             image = image[..., :3]
         return image
 
-    @data_coco.command
     def generate_batch(self):
         idx_global = 0
         while True:

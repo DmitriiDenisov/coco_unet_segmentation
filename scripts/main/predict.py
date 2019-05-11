@@ -2,7 +2,7 @@ from keras.models import load_model
 import numpy as np
 from scripts.main.generator import KerasGenerator
 
-model = load_model('../../models/weights.01-0.02048.hdf5')
+model = load_model('../../models/weights.02-0.36766.hdf5')
 
 keras_gen = KerasGenerator(annFile='../../coco_dataset/annotations/instances_val2017.json',
                      dataset_dir='coco_dataset',
