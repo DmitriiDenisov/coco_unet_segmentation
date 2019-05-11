@@ -6,17 +6,16 @@ import sys
 PROJECT_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(PROJECT_PATH) # чтобы из консольки можно было запускать
 
-from utils import utils
+from utils_folder import utils, config
 import skimage.color
 import skimage.io
 import skimage.transform
-
 from sacred import Experiment
 import numpy as np
 from PIL import Image
 from pycocotools.coco import COCO
-from scripts.coco import coco
-config = coco.CocoConfig()
+
+config = config.CocoConfig()
 
 data_coco = Experiment("dataset")
 
@@ -25,7 +24,7 @@ class KerasGenerator:
     def __init__(self, annFile, batch_size, dataset_dir, subset, year, shuffle=True):
         self.coco = COCO(annFile)
         self.batch_size = batch_size
-        self.num_cats = len(list(self.coco.cats.keys()))
+        self.num_cats = len(list(self.coco.cats.keys())) + 1
         self.total_imgs = len(self.coco.imgToAnns.keys())
         self.all_images_ids = list(self.coco.imgToAnns.keys())
         self.shuffle = shuffle
@@ -69,7 +68,7 @@ class KerasGenerator:
         idx_global = 0
         while True:
             # Если конец эпохи:
-            if idx_global == 0 or idx_global > len(self.all_images_ids):
+            if idx_global == 0 or idx_global >= len(self.all_images_ids):
                 idx_global = 0
                 images_ids = np.copy(self.all_images_ids)
                 if self.shuffle:
@@ -125,6 +124,3 @@ class KerasGenerator:
                 del mask_one_hot
             yield batch_x, batch_y
             batch_train_indecies = list(islice(i, self.batch_size))
-
-
-

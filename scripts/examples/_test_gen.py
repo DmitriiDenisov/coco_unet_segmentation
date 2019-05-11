@@ -3,8 +3,9 @@ from tqdm import tqdm
 
 from scripts.coco.unet import get_unet
 from scripts.examples.try_generator import stupid_gen
-from scripts.coco import coco
-config = coco.CocoConfig()
+from utils_folder import config
+
+config = config.CocoConfig()
 
 img_size_target = (config.IMAGE_MAX_DIM, config.IMAGE_MAX_DIM, 3)
 # Если обучать с нуля:

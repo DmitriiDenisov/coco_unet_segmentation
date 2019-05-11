@@ -7,12 +7,11 @@ ROOT_DIR = os.path.abspath("../../")
 
 # Import Mask RCNN
 sys.path.append(ROOT_DIR)  # To find local version of the library
-from utils import utils
-from utils import visualize
-from utils.utils import log
-from scripts.coco import coco
+from utils_folder import utils, config
+from utils_folder import visualize
+from utils_folder.utils import log
 
-config = coco.CocoConfig()
+config = config.CocoConfig()
 COCO_DIR = "coco_dataset"  # TODO: enter value here
 
 
@@ -21,7 +20,7 @@ if config.NAME == 'shapes':
     dataset = shapes.ShapesDataset()
     dataset.load_shapes(500, config.IMAGE_SHAPE[0], config.IMAGE_SHAPE[1])
 elif config.NAME == "coco":
-    dataset = coco.CocoDataset()
+    dataset = config.CocoDataset()
     dataset.load_coco(COCO_DIR, "train", year=2017)
 # Must call before using the dataset
 dataset.prepare()

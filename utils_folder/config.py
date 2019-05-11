@@ -1,28 +1,26 @@
-"""
-Mask R-CNN
-Base Configurations class.
-
-Copyright (c) 2017 Matterport, Inc.
-Licensed under the MIT License (see LICENSE for details)
-Written by Waleed Abdulla
-"""
-
+import os
 import numpy as np
+import sys
+
+ROOT_DIR = os.path.abspath("../../")
+sys.path.append(ROOT_DIR)
 
 
-# Base Configuration Class
-# Don't use this class directly. Instead, sub-class it and override
-# the configurations you need to change.
+class CocoConfig:
+    # Give the configuration a recognizable name
+    NAME = "coco"
 
-class Config(object):
-    """Base configuration class. For custom configurations, create a
-    sub-class that inherits from this one and override properties
-    that need to be changed.
-    """
-    # Name the configurations. For example, 'COCO', 'Experiment 3', ...etc.
-    # Useful if your code needs to do things differently depending on which
-    # experiment is running.
-    NAME = None  # Override in sub-classes
+    # We use a GPU with 12GB memory, which can fit two images.
+    # Adjust down if you use a smaller GPU.
+    IMAGES_PER_GPU = 2
+
+    # Uncomment to train on 8 GPUs (default is 1)
+    # GPU_COUNT = 8
+
+    # Number of classes (including background)
+    NUM_CLASSES = 1 + 90  # COCO has 80 classes
+
+    # NAME = None  # Override in sub-classes
 
     # NUMBER OF GPUs to use. When using only a CPU, this needs to be set to 1.
     GPU_COUNT = 1
@@ -31,7 +29,7 @@ class Config(object):
     # handle 2 images of 1024x1024px.
     # Adjust based on your GPU memory and image sizes. Use the highest
     # number that your GPU can handle for best performance.
-    IMAGES_PER_GPU = 2
+    # IMAGES_PER_GPU = 2
 
     # Number of training steps per epoch
     # This doesn't need to match the size of the training set. Tensorboard
@@ -70,7 +68,7 @@ class Config(object):
     TOP_DOWN_PYRAMID_SIZE = 256
 
     # Number of classification classes (including background)
-    NUM_CLASSES = 1  # Override in sub-classes
+    # NUM_CLASSES = 1  # Override in sub-classes
 
     # Length of square anchor side in pixels
     RPN_ANCHOR_SCALES = (32, 64, 128, 256, 512)
@@ -90,7 +88,7 @@ class Config(object):
 
     # How many anchors per image to use for RPN training
     RPN_TRAIN_ANCHORS_PER_IMAGE = 256
-    
+
     # ROIs kept after tf.nn.top_k and before non-maximum suppression
     PRE_NMS_LIMIT = 6000
 
@@ -210,27 +208,3 @@ class Config(object):
     # Gradient norm clipping
     GRADIENT_CLIP_NORM = 5.0
 
-    def __init__(self):
-        """Set values of computed attributes."""
-        # Effective batch size
-        self.BATCH_SIZE = self.IMAGES_PER_GPU * self.GPU_COUNT
-
-        # Input image size
-        if self.IMAGE_RESIZE_MODE == "crop":
-            self.IMAGE_SHAPE = np.array([self.IMAGE_MIN_DIM, self.IMAGE_MIN_DIM,
-                self.IMAGE_CHANNEL_COUNT])
-        else:
-            self.IMAGE_SHAPE = np.array([self.IMAGE_MAX_DIM, self.IMAGE_MAX_DIM,
-                self.IMAGE_CHANNEL_COUNT])
-
-        # Image meta data length
-        # See compose_image_meta() for details
-        self.IMAGE_META_SIZE = 1 + 3 + 3 + 4 + 1 + self.NUM_CLASSES
-
-    def display(self):
-        """Display Configuration values."""
-        print("\nConfigurations:")
-        for a in dir(self):
-            if not a.startswith("__") and not callable(getattr(self, a)):
-                print("{:30} {}".format(a, getattr(self, a)))
-        print("\n")

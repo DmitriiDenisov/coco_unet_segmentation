@@ -6,7 +6,7 @@ ROOT_DIR = os.path.abspath("../../")
 
 # Import Mask RCNN
 sys.path.append(ROOT_DIR)  # To find local version of the library
-from utils import visualize
+from utils_folder import visualize, config
 
 # Run one of the code blocks
 
@@ -15,13 +15,12 @@ from utils import visualize
 # config = shapes.ShapesConfig()
 
 # MS COCO Dataset
-from scripts.coco import coco
-config = coco.CocoConfig()
+config = config.CocoConfig()
 COCO_DIR = "coco_dataset"  # TODO: enter value here
 
 # Load dataset
 if config.NAME == "coco":
-    dataset = coco.CocoDataset()
+    dataset = config.CocoDataset()
     dataset.load_coco(COCO_DIR, "val", year=2017)
 
 # Must call before using the dataset
