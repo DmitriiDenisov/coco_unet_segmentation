@@ -1,37 +1,118 @@
 import os
 import sys
 import numpy as np
-# Root directory of the project
+
 ROOT_DIR = os.path.abspath("../../")
+sys.path.append(ROOT_DIR)
+from utils_folder import visualize, config, coco_dataset
 
-# Import Mask RCNN
-sys.path.append(ROOT_DIR)  # To find local version of the library
-from utils_folder import visualize, config
+class_names = ['BG',
+ 'person',
+ 'bicycle',
+ 'car',
+ 'motorcycle',
+ 'airplane',
+ 'bus',
+ 'train',
+ 'truck',
+ 'boat',
+ 'traffic light',
+ 'fire hydrant',
+ 'stop sign',
+ 'parking meter',
+ 'bench',
+ 'bird',
+ 'cat',
+ 'dog',
+ 'horse',
+ 'sheep',
+ 'cow',
+ 'elephant',
+ 'bear',
+ 'zebra',
+ 'giraffe',
+ 'backpack',
+ 'umbrella',
+ 'handbag',
+ 'tie',
+ 'suitcase',
+ 'frisbee',
+ 'skis',
+ 'snowboard',
+ 'sports ball',
+ 'kite',
+ 'baseball bat',
+ 'baseball glove',
+ 'skateboard',
+ 'surfboard',
+ 'tennis racket',
+ 'bottle',
+ 'wine glass',
+ 'cup',
+ 'fork',
+ 'knife',
+ 'spoon',
+ 'bowl',
+ 'banana',
+ 'apple',
+ 'sandwich',
+ 'orange',
+ 'broccoli',
+ 'carrot',
+ 'hot dog',
+ 'pizza',
+ 'donut',
+ 'cake',
+ 'chair',
+ 'couch',
+ 'potted plant',
+ 'bed',
+ 'dining table',
+ 'toilet',
+ 'tv',
+ 'laptop',
+ 'mouse',
+ 'remote',
+ 'keyboard',
+ 'cell phone',
+ 'microwave',
+ 'oven',
+ 'toaster',
+ 'sink',
+ 'refrigerator',
+ 'book',
+ 'clock',
+ 'vase',
+ 'scissors',
+ 'teddy bear',
+ 'hair drier',
+ 'toothbrush']
 
-# Run one of the code blocks
+PREDICTED = False
 
-# Shapes toy dataset
-# import shapes
-# config = shapes.ShapesConfig()
+if PREDICTED:
+    image = np.load('../main/x_test.npy')
+    mask = np.load('../main/y_pred.npy')
 
-# MS COCO Dataset
-config = config.CocoConfig()
-COCO_DIR = "coco_dataset"  # TODO: enter value here
+    image = np.squeeze(image)
+    mask = np.squeeze(mask)
+    mask = np.round(mask) * 255
 
-# Load dataset
-if config.NAME == "coco":
-    dataset = config.CocoDataset()
-    dataset.load_coco(COCO_DIR, "val", year=2017)
+    class_names.extend(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'f', 'q', 'e'])
 
-# Must call before using the dataset
-dataset.prepare()
+    visualize.display_top_masks(image, mask, np.arange(91), class_names)
+else:
+    config = config.CocoConfig()
+    COCO_DIR = "coco_dataset"
+    if config.NAME == "main":
+        dataset = coco_dataset.CocoDataset()
+        dataset.load_coco(COCO_DIR, "val", year=2017)
+    dataset.prepare()
+
+    image_ids = np.random.choice(dataset.image_ids, 4)
+    for image_id in image_ids:
+        image = dataset.load_image(image_id)
+        mask, class_ids = dataset.load_mask(image_id)
+        visualize.display_top_masks(image, mask, class_ids, dataset.class_names)
 
 
-# Load and display random scripts
-# dataset.coco.imgs[dataset.image_info[image_id]['id']]['coco_url']
-
-image_ids = np.random.choice(dataset.image_ids, 4)
-for image_id in image_ids:
-    image = dataset.load_image(image_id)
-    mask, class_ids = dataset.load_mask(image_id)
-    visualize.display_top_masks(image, mask, class_ids, dataset.class_names)

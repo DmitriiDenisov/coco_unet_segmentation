@@ -8,7 +8,7 @@ sys.path.append(ROOT_DIR)
 
 class CocoConfig:
     # Give the configuration a recognizable name
-    NAME = "coco"
+    NAME = "main"
 
     # We use a GPU with 12GB memory, which can fit two images.
     # Adjust down if you use a smaller GPU.
