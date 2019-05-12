@@ -1,14 +1,14 @@
 import os
 import tensorflow as tf
-import time
-from keras.callbacks import TensorBoard
+from time import time
+from keras.callbacks import TensorBoard, Callback
 from telepyth import TelepythClient
 from datetime import datetime
 tp = TelepythClient('14227435377386201718')
 
 
 class TensorBoardBatchLogger(TensorBoard):
-    def __init__(self, project_path, step_size_train, batch_size, log_every=1, VERBOSE=0, **kwargs):
+    def __init__(self, project_path, batch_size, log_every=1, VERBOSE=0, **kwargs):
         tf.summary.FileWriterCache.clear()
         self.project_path = project_path
         self.batch_size = batch_size
@@ -81,3 +81,18 @@ class TensorBoardBatchLogger(TensorBoard):
             temp_path = temp_path_run + '_' + str(i)
             i += 1
         return temp_path
+
+
+class SaveModelEachBatch(Callback):
+    def __init__(self, models_path):
+        super().__init__()
+        self.start_time = time()
+        self.models_path = models_path
+
+    def on_batch_end(self, batch, logs=None):
+        if (time() - self.start_time) / 60 / 60 > 5:
+            time_ = round((time() - self.start_time) / 60 / 60, 2)
+            loss = round(logs['mean_loss'], 3)
+            path_to_my_model = os.path.join(self.models_path, 'weights_' + 'time_' + str(time_) + 'loss_' + str(loss) + '.h5')
+            self.model.save(path_to_my_model)
+            self.start_time = time()
