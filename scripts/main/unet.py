@@ -1,5 +1,6 @@
 from keras import Model
 from keras.layers import Conv2D, BatchNormalization, Activation, MaxPooling2D, Dropout, Conv2DTranspose, concatenate
+from scripts.main.metrics import iou_loss_core
 
 def conv2d_block(input_tensor, n_filters, kernel_size=3, batchnorm=True):
     # first layer
@@ -60,7 +61,7 @@ def get_unet(input_img, exit_channels, n_filters=16, dropout=0.5, batchnorm=True
 
     outputs = Conv2D(exit_channels, (1, 1), activation='sigmoid')(c9)
     model = Model(inputs=[input_img], outputs=[outputs])
-    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[])
+    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[iou_loss_core])
 
     return model
 
