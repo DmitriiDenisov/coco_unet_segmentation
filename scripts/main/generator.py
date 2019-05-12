@@ -72,6 +72,7 @@ class KerasGenerator:
                 iterable = np.copy(images_ids)
                 i = iter(iterable)
                 batch_train_indecies = list(islice(i, self.batch_size))
+                self.batch_train_indecies = batch_train_indecies
             batch_x = np.array([])
             batch_y = np.array([])
             # Цикл по батчу
@@ -120,3 +121,4 @@ class KerasGenerator:
                 del mask_one_hot
             yield batch_x, batch_y
             batch_train_indecies = list(islice(i, self.batch_size))
+            self.batch_train_indecies = batch_train_indecies
