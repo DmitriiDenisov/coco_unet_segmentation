@@ -2,6 +2,7 @@
 logs/
 *.h5
 models/*
+!models/.keep
 coco_dataset/
 **/.DS_Store
 
