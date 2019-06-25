@@ -14,7 +14,7 @@ class CocoConfig:
            78, 79, 80,81, 82, 84, 85, 86, 87, 88, 89, 90]
 
     # Names of classes
-    class_names = ['BG','person','bicycle','car','motorcycle','airplane','bus','train','truck','boat',
+    class_names = ['person','bicycle','car','motorcycle','airplane','bus','train','truck','boat',
                    'traffic light','fire hydrant','stop sign','parking meter','bench','bird','cat','dog',
                    'horse','sheep','cow','elephant','bear','zebra','giraffe','backpack','umbrella','handbag',
                    'tie','suitcase','frisbee','skis','snowboard','sports ball','kite','baseball bat',
@@ -22,10 +22,10 @@ class CocoConfig:
                    'fork','knife','spoon','bowl','banana','apple','sandwich','orange','broccoli','carrot',
                    'hot dog','pizza','donut','cake','chair','couch','potted plant','bed','dining table',
                    'toilet','tv','laptop','mouse','remote','keyboard','cell phone','microwave','oven','toaster',
-                   'sink','refrigerator','book','clock','vase','scissors','teddy bear','hair drier','toothbrush']
+                   'sink','refrigerator','book','clock','vase','scissors','teddy bear','hair drier','toothbrush'] # нулевой класс убран, чтобы не было Backgorund
     NUM_CLASSES = len(class_names)
 
-    map_id_cat = {cat_id: i + 1 for i, cat_id in enumerate(ids)}  # нулевой слой - BackGround
+    map_id_cat = {cat_id: i for i, cat_id in enumerate(ids)}  # нулевой слой больше не BackGround
 
     # Give the configuration a recognizable name
     NAME = "main"

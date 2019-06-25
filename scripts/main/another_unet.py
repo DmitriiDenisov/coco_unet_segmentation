@@ -115,7 +115,7 @@ def build_model(input_layer, start_neurons, DropoutRatio=0.5, nn_image_size=101)
     uconv1 = Activation(ACTIVATION)(uconv1)
 
     uconv1 = Dropout(DropoutRatio / 2)(uconv1)
-    output_layer = Conv2D(81, (1, 1), padding="same", activation="sigmoid")(uconv1)
+    output_layer = Conv2D(80, (1, 1), padding="same", activation="sigmoid")(uconv1)
 
     return output_layer
 

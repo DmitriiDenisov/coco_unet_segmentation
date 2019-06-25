@@ -15,6 +15,10 @@ import colorsys
 
 import numpy as np
 from skimage.measure import find_contours
+
+
+import matplotlib
+matplotlib.use('agg')
 import matplotlib.pyplot as plt
 from matplotlib import patches,  lines
 from matplotlib.patches import Polygon
@@ -54,6 +58,12 @@ def display_images(images, titles=None, cols=4, cmap=None, norm=None,
                    norm=norm, interpolation=interpolation)
         i += 1
     plt.show()
+
+    import os.path
+    if os.path.isfile("out.png"):
+        plt.savefig("out_1.png")
+    else:
+        plt.savefig("out.png")
 
 
 def random_colors(N, bright=True):

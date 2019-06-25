@@ -6,6 +6,8 @@ sys.path.append(ROOT_DIR)
 from utils_folder import visualize, coco_dataset, config
 config = config.CocoConfig()
 
+
+
 PREDICTED = True
 
 if PREDICTED:

@@ -21,7 +21,7 @@ class KerasGenerator:
     def __init__(self, annFile, batch_size, dataset_dir, subset, year, shuffle=True):
         self.coco = COCO(annFile)
         self.batch_size = batch_size
-        self.num_cats = len(list(self.coco.cats.keys())) + 1
+        self.num_cats = len(list(self.coco.cats.keys())) # без background !
         self.total_imgs = len(self.coco.imgToAnns.keys())
         self.all_images_ids = list(self.coco.imgToAnns.keys())
         self.shuffle = shuffle
@@ -29,7 +29,7 @@ class KerasGenerator:
         self.subset = subset
         self.year = year
 
-        self.map_id_cat = {cat_id: i+1 for i, cat_id in enumerate(list(self.coco.cats.keys()))} # нулевой слой - BackGround
+        self.map_id_cat = {cat_id: i for i, cat_id in enumerate(list(self.coco.cats.keys()))} # нулевой слой больше не BackGround
 
         # Add paths
         image_dir = "{}/images/{}{}".format(self.dataset_dir, self.subset, self.year)
@@ -85,7 +85,7 @@ class KerasGenerator:
                 ann_ids = self.coco.getAnnIds(imgIds=id_image, iscrowd=None)
                 anns = self.coco.loadAnns(ann_ids)
                 mask_one_hot = np.zeros(target_shape, dtype=np.uint8)
-                mask_one_hot[:, :, 0] = 1  # every pixel begins as background
+                # mask_one_hot[:, :, 0] = 1  # every pixel begins as background
 
                 for ann in anns:
                     mask_partial = self.coco.annToMask(ann)
@@ -93,7 +93,7 @@ class KerasGenerator:
                     #                           (target_shape[1], target_shape[0]),
                     #                           interpolation=cv2.INTER_NEAREST)
                     mask_one_hot[mask_partial > 0, self.map_id_cat[ann['category_id']]] = 1
-                    mask_one_hot[mask_partial > 0, 0] = 0
+                    # mask_one_hot[mask_partial > 0, 0] = 0 # Соотв. пиксели в нулевом слое (background) обнуляются
 
                 # load_image
                 img = self.load_image(image_id=id_image)
